@@ -18,6 +18,11 @@ export default class AccountsDAO {
         }
     }
 
+    static getID(str) {
+        const matches = str.split('"');
+        return matches[1] ? matches[1] : str;
+    }
+
     static async getAccounts({
         page = 0,
         accountsPerPage = 20,
@@ -35,8 +40,16 @@ export default class AccountsDAO {
         const displayCursor = cursor.limit(accountsPerPage).skip(accountsPerPage * page)
 
         try {
-            const accountsList = await displayCursor.toArray()
+            const accountsArray = await displayCursor.toArray()
             const totalNumAccounts = await accounts.countDocuments(query)
+
+            const accountsPromises = accountsArray.map(async account => {
+                let data = await this.getAccountById(this.getID(account._id.toString()))
+                return data;
+            })
+
+            let accountsList = await Promise.all(accountsPromises)
+
 
             return { accountsList, totalNumAccounts }
         } catch (err) {
