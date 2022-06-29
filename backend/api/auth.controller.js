@@ -1,5 +1,4 @@
 import AuthDAO from "../dao/authDAO.js";
-import bcrpyt from 'bcrypt'
 
 export default class AuthController {
     static async apiPostLogin(req, res, next) {
