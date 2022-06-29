@@ -10,4 +10,5 @@ router.route("/id/:id").get(AccountCtrl.apiGetAccountById)
 
 router.route("/add").post(WalletsCtrl.apiPostWallet)
 
+
 export default router;
