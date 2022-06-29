@@ -9,7 +9,7 @@ router.route("/check").get(AccountCtrl.apiGetAllAccounts)
 
 router.route("/id/:id").get(AccountCtrl.apiGetAccountById)
 
-router.route("/add/wallets").post(WalletsCtrl.apiPostWallet)
+router.route("/add/wallet").post(WalletsCtrl.apiPostWallet)
 
 router.route("/add/account").post(AccountCtrl.apiPostAccount)
 
