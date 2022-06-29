@@ -33,4 +33,14 @@ export default class AccountsController {
             res.status(500).json({ error: e })
         }
     }
+
+    static async apiPostAccount(req, res, next) {
+        try {
+            let name = req.body.accountName
+            await AccountsDAO.addAccount(name)
+            res.json({ status: "success" })
+        } catch (error) {
+            res.status(500).json({ error: error.message })
+        }
+    }
 }

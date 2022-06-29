@@ -23,6 +23,20 @@ export default class AccountsDAO {
         return matches[1] ? matches[1] : str;
     }
 
+
+    static async addAccount(name) {
+        try {
+            const accountDoc = {
+                accountName: name,
+            }
+            return await accounts.insertOne(accountDoc)
+        } catch (e) {
+            console.error(
+                `Unable to add account to database: ${e}`
+            )
+        }
+    }
+
     static async getAccounts({
         page = 0,
         accountsPerPage = 20,
