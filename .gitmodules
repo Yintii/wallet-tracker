@@ -1,0 +1,3 @@
+[submodule "wallet-tracker-client"]
+	path = wallet-tracker-client
+	url = https://github.com/Yintii/wallet-tracker-client
