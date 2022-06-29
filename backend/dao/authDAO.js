@@ -31,8 +31,6 @@ export default class AuthDAO {
 
             let token = false;
 
-            console.log(password)
-            console.log(account[0].password)
             let match = bcrpyt.compareSync(password, account[0].password)
 
             if (match) {
@@ -55,7 +53,12 @@ export default class AuthDAO {
     }
 
     static async logout() {
-
+        try {
+            localStorage.removeItem("user")
+            navigate("/login")
+        } catch (error) {
+            console.error("unable to logout ", error)
+        }
     }
 
 }

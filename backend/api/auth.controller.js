@@ -8,7 +8,6 @@ export default class AuthController {
 
 
             const user = await AuthDAO.login(username, password);
-            console.log("User: ", user)
 
             res.json({ status: "success", message: "logged in", user: user })
         } catch (error) {
