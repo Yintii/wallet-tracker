@@ -1,6 +1,7 @@
 import express from "express"
 import AccountCtrl from "./accounts.controller.js"
 import WalletsCtrl from "./wallets.controller.js"
+import AuthCtrl from "./auth.controller.js"
 
 const router = express.Router()
 
@@ -10,5 +11,8 @@ router.route("/id/:id").get(AccountCtrl.apiGetAccountById)
 
 router.route("/add").post(WalletsCtrl.apiPostWallet)
 
+router.route("/login").post(AuthCtrl.apiPostLogin)
+
+router.route("/logout").get(AuthCtrl.apiGetLogout)
 
 export default router;
