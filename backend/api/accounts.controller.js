@@ -10,6 +10,9 @@ export default class AccountsController {
             accountsPerPage
         })
 
+
+
+
         let response = {
             accountsList: accountsList,
             page: page,
@@ -17,7 +20,13 @@ export default class AccountsController {
             total_results: totalNumAccounts
         }
         res.json(response);
+
+
+
     }
+
+
+
 
     static async apiGetAccountById(req, res, next) {
         try {

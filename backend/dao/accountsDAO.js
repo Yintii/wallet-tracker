@@ -1,5 +1,10 @@
+import { response } from "express"
 import mongodb from "mongodb"
+import fetch from 'node-fetch'
+import { getBalance } from "../scripts/fetchBalances.js"
 const ObjectId = mongodb.ObjectId
+
+
 
 let accounts
 
@@ -72,6 +77,7 @@ export default class AccountsDAO {
         }
 
     }
+
 
     static async getAccountById(id) {
         try {
