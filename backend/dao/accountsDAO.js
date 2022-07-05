@@ -1,7 +1,6 @@
 import { response } from "express"
 import mongodb from "mongodb"
 import fetch from 'node-fetch'
-import { getBalance } from "../scripts/fetchBalances.js"
 const ObjectId = mongodb.ObjectId
 
 
@@ -67,8 +66,21 @@ export default class AccountsDAO {
                 return data;
             })
 
-            let accountsList = await Promise.all(accountsPromises)
+            let _accountsList = await Promise.all(accountsPromises)
 
+            let balancePromises = _accountsList.map(async account => {
+                let walletPromises = await account.wallets.map(async wallet => {
+                    let balance = await fetch(`https://btc1.trezor.io/api/v2/xpub/${wallet.walletXpub}`)
+                        .then(response => response.text())
+                        .then(data => data)
+                    console.log(balance)
+                })
+                let walletList = await Promise.all(walletPromises)
+                return walletList
+
+            })
+
+            let accountsList = await Promise.all(balancePromises)
 
             return { accountsList, totalNumAccounts }
         } catch (err) {
