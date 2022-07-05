@@ -68,11 +68,23 @@ export default class AccountsDAO {
 
             let _accountsList = await Promise.all(accountsPromises)
 
-            let balancePromises = _accountsList.map(async account => {
+            let accountsList = this.getWalletBalances(_accountsList)
+
+            return { accountsList, totalNumAccounts }
+        } catch (err) {
+            console.error(`Unable to convert cursor to array or problem counting documents: ${err}`)
+            return { accountsList: [], totalNumAccounts: 0 }
+        }
+
+    }
+
+    static async getWalletBalances(listOfAccounts) {
+        try {
+            let balancePromises = listOfAccounts.map(async account => {
                 let walletPromises = await account.wallets.map(async wallet => {
                     let balance = await fetch(`https://btc1.trezor.io/api/v2/xpub/${wallet.walletXpub}`)
-                        .then(response => response.text())
-                        .then(data => data)
+                        .then(response => response.json())
+                        .then(data => data.balance)
                     console.log(balance)
                 })
                 let walletList = await Promise.all(walletPromises)
@@ -81,13 +93,11 @@ export default class AccountsDAO {
             })
 
             let accountsList = await Promise.all(balancePromises)
-
-            return { accountsList, totalNumAccounts }
-        } catch (err) {
-            console.error(`Unable to convert cursor to array or problem counting documents: ${err}`)
-            return { accountsList: [], totalNumAccounts: 0 }
+            return accountsList
+        } catch (error) {
+            console.error(`Unable to fetch wallet balances: `, error.message)
+            return []
         }
-
     }
 
 
