@@ -66,37 +66,37 @@ export default class AccountsDAO {
                 return data;
             })
 
-            let _accountsList = await Promise.all(accountsPromises)
+            let accountsList = await Promise.all(accountsPromises)
 
-            let accountsList = this.getWalletBalances(_accountsList)
+            // let accountsList = await this.getWalletBalances(_accountsList)
+
+
 
             return { accountsList, totalNumAccounts }
         } catch (err) {
             console.error(`Unable to convert cursor to array or problem counting documents: ${err}`)
             return { accountsList: [], totalNumAccounts: 0 }
         }
-
     }
 
-    static async getWalletBalances(listOfAccounts) {
+    static async getWalletBalances(_accountsList) {
         try {
-            let balancePromises = listOfAccounts.map(async account => {
+            let accountPromises = _accountsList.map(async account => {
                 let walletPromises = await account.wallets.map(async wallet => {
-                    let balance = await fetch(`https://btc1.trezor.io/api/v2/xpub/${wallet.walletXpub}`)
-                        .then(response => response.json())
+                    let balance = fetch(`https://btc1.trezor.io/api/v2/xpub/${wallet.walletXpub}`)
+                        .then(async response => await response.json())
                         .then(data => data.balance)
-                    console.log(balance)
+
+                    return { ...wallet, balance: balance }
                 })
-                let walletList = await Promise.all(walletPromises)
-                return walletList
+                let wallets = await Promise.all(walletPromises)
 
+                return { ...account, wallets: wallets }
             })
-
-            let accountsList = await Promise.all(balancePromises)
+            let accountsList = await Promise.all(accountPromises);
             return accountsList
         } catch (error) {
-            console.error(`Unable to fetch wallet balances: `, error.message)
-            return []
+            console.log(`Unable to fetch balances: ${error}`)
         }
     }
 

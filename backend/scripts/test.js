@@ -1,7 +1,14 @@
 import fetch from 'node-fetch'
 
-const myXpub = "ypub6WWfJchQfTztCcoYHfVHmxg3gPZpPMRnvTZUpfWK82RwdHMKT64sthqyjWjVGUigaodPByLb4AwqC6WjCyFYZ9FMjhAPY8wk2hHCXeGqBvV"
+const myXpub = "xpub6BgPzx2VWnTQMKcRTJhfZsaYWRRNSjSJ1M3G3GcRk244aBY6CRuKGeBqiJmuGa4mBAWaSVk2bWbHJouAVGqXkuZksMTxxE8FkyDZ968o4dk"
 
-await fetch(`https://btc1.trezor.io/api/v2/xpub/${myXpub}`)
-    .then(response => response.json())
-    .then(data => console.log(data))
+const websocket = new WebSocket('wss://ws.blockchain.info/inv')
+
+console.log(websocket)
+
+// setInterval(() => {
+//     fetch(`https://blockchain.info/balance?active=${myXpub}`)
+//         .then(response => response.json())
+//         .then(data => console.log(data))
+
+// }, 1000)
