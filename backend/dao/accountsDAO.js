@@ -1,8 +1,13 @@
-import { response } from "express"
 import mongodb from "mongodb"
 import fetch from 'node-fetch'
+import Bottleneck from 'bottleneck'
+
 const ObjectId = mongodb.ObjectId
 
+const limiter = new Bottleneck({
+    maxConcurrent: 1,
+    minTime: 1000
+})
 
 
 let accounts
@@ -68,8 +73,6 @@ export default class AccountsDAO {
 
             let accountsList = await Promise.all(accountsPromises)
 
-
-
             return { accountsList, totalNumAccounts }
         } catch (err) {
             console.error(`Unable to convert cursor to array or problem counting documents: ${err}`)
@@ -82,10 +85,13 @@ export default class AccountsDAO {
         try {
             let accountPromises = _accountsList.map(async account => {
                 let walletPromises = account.wallets.map(async wallet => {
-                    let balance = await fetch(`https://btc1.trezor.io/api/v2/xpub/${wallet.walletXpub}`)
-                        .then(response => response.json())
-                        .then(data => data.balance)
-                    return { ...wallet, balance: balance }
+                    let data = await limiter.schedule(() => {
+                        let balanceData = fetch(`https://btc1.trezor.io/api/v2/xpub/${wallet.walletXpub}`)
+                            .then(response => response.json())
+                            .then(data => data.balance)
+                        return balanceData
+                    })
+                    return { ...wallet, balance: data }
 
                 })
 
