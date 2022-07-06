@@ -10,19 +10,16 @@ export default class AccountsController {
             accountsPerPage
         })
 
-
+        const accounts = await AccountsDAO.getWalletBalances(accountsList)
 
 
         let response = {
-            accountsList: accountsList,
+            accountsList: accounts,
             page: page,
             entriesPerPage: accountsPerPage,
             total_results: totalNumAccounts
         }
         res.json(response);
-
-
-
     }
 
 

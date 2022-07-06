@@ -68,8 +68,6 @@ export default class AccountsDAO {
 
             let accountsList = await Promise.all(accountsPromises)
 
-            // let accountsList = await this.getWalletBalances(_accountsList)
-
 
 
             return { accountsList, totalNumAccounts }
@@ -79,22 +77,24 @@ export default class AccountsDAO {
         }
     }
 
+
     static async getWalletBalances(_accountsList) {
         try {
             let accountPromises = _accountsList.map(async account => {
-                let walletPromises = await account.wallets.map(async wallet => {
-                    let balance = fetch(`https://btc1.trezor.io/api/v2/xpub/${wallet.walletXpub}`)
-                        .then(async response => await response.json())
+                let walletPromises = account.wallets.map(async wallet => {
+                    let balance = await fetch(`https://btc1.trezor.io/api/v2/xpub/${wallet.walletXpub}`)
+                        .then(response => response.json())
                         .then(data => data.balance)
-
                     return { ...wallet, balance: balance }
-                })
-                let wallets = await Promise.all(walletPromises)
 
+                })
+
+                let wallets = await Promise.all(walletPromises)
                 return { ...account, wallets: wallets }
             })
             let accountsList = await Promise.all(accountPromises);
             return accountsList
+
         } catch (error) {
             console.log(`Unable to fetch balances: ${error}`)
         }
